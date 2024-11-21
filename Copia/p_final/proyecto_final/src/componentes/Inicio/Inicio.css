@@ -1,0 +1,19 @@
+.inicio-container {
+  text-align: center;
+  padding: 50px;
+}
+
+
+.inicio-boton {
+  padding: 15px 30px;
+  background-color: #ff5722;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.inicio-boton:hover {
+  background-color: #ff784e;
+}

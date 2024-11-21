@@ -1,0 +1,184 @@
+:root {
+  --primary-color: #00bcd4;
+  --primary-color-dark: #008c9e;
+  --secondary-color: #ff5722; 
+  --accent-color: #ffeb3b;
+  --background-color-light: #ffffff;
+  --background-color-dark: #263238; 
+  --text-color-dark: #212121; 
+  --text-color-light: #757575; 
+  --border-color-light: #e0e0e0;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.15rem;
+  --font-size-xl: 1.4rem;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --transition-duration: 0.3s;
+}
+
+/* Estilos del modal y formulario del producto */
+.product-form-modal .modal-content {
+  border-radius: var(--border-radius);
+  background-color: var(--background-color-light);
+  padding: 25px;
+  border: none;
+  box-shadow: var(--box-shadow);
+  max-width: 600px;
+  margin: auto;
+}
+
+.product-form-modal .modal-header {
+  border-bottom: 1px solid var(--border-color-light);
+  background-color: var(--primary-color);
+  color: var(--background-color-light);
+  text-align: center;
+  padding: 20px;
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.product-form-modal .modal-footer {
+  border-top: 1px solid var(--border-color-light);
+  text-align: center;
+  padding: 20px;
+  background-color: var(--background-color-light);
+}
+
+/* Estilos para los inputs dentro del formulario de producto */
+.product-form-modal input[type="text"],
+.product-form-modal input[type="number"],
+.product-form-modal input[type="file"] {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius);
+  background-color: var(--background-color-white);
+  font-size: var(--font-size-base);
+  color: var(--text-color-dark);
+  transition: all var(--transition-duration) ease;
+}
+
+.product-form-modal input[type="text"]:focus,
+.product-form-modal input[type="number"]:focus,
+.product-form-modal input[type="file"]:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px rgba(255, 235, 59, 0.5);
+  outline: none;
+}
+
+/* Estilos del botón de envío */
+.product-form-modal button[type="submit"] {
+  background-color: var(--primary-color);
+  color: var(--background-color-light);
+  padding: 16px 32px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color var(--transition-duration) ease, transform var(--transition-duration) ease;
+}
+
+.product-form-modal button[type="submit"]:hover {
+  background-color: var(--primary-color-dark);
+  transform: translateY(-2px);
+}
+
+.product-form-modal button[type="submit"]:active {
+  background-color: var(--primary-color);
+  transform: translateY(0);
+}
+
+/* Estilos para la barra de navegación */
+.navbar-custom {
+  background-color: var(--primary-color); /* Azul cielo */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-custom .nav-link {
+  color: var(--background-color-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 12px 20px;
+  transition: color var(--transition-duration) ease, background-color var(--transition-duration) ease;
+}
+
+.navbar-custom .nav-link:hover {
+  color: var(--secondary-color);
+  background-color: rgba(255, 87, 34, 0.1); 
+}
+
+.navbar-custom .btn-primary {
+  background-color: var(--secondary-color);
+  color: var(--background-color-light);
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: var(--font-size-base);
+  transition: background-color var(--transition-duration) ease, transform var(--transition-duration) ease;
+}
+
+.navbar-custom .btn-primary:hover {
+  background-color: var(--primary-color-dark);
+  transform: translateY(-2px);
+}
+
+.navbar-custom .btn-primary:active {
+  background-color: var(--secondary-color);
+  transform: translateY(0);
+}
+
+/* Estilos para las tarjetas de productos */
+.product-card {
+  background-color: var(--background-color-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all var(--transition-duration) ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
+.product-card .product-name {
+  color: var(--text-color-dark);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  transition: color var(--transition-duration) ease;
+}
+
+.product-card .product-name:hover {
+  color: var(--primary-color);
+}
+
+.product-card .product-price {
+  font-size: 1.2rem;
+  color: var(--secondary-color); 
+  font-weight: bold;
+}
+
+/* Otros estilos generales */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background-color-light);
+  color: var(--text-color-dark);
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  color: var(--text-color-dark);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: underline;
+}

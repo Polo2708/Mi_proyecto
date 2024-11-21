@@ -1,0 +1,42 @@
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.profile-avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  background-color: #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.profile-email,
+.profile-phone,
+.profile-address,
+.profile-dob,
+.profile-bio,
+.profile-gender {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.logout-button {
+  margin-top: 20px;
+}
+
+.mt-2 {
+  margin-top: 10px;
+}
+
+.ml-2 {
+  margin-left: 10px;
+}

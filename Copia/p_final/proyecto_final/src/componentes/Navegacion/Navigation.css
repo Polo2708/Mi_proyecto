@@ -1,0 +1,115 @@
+.navbar-custom {
+  background-color: #0193d6;
+  padding: 20px 30px;
+  border-bottom: 2px solid #ff5722;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  transition: all 0.3s ease;
+}
+
+.logo-img {
+  width: 150px;
+  transition: all 0.3s ease;
+}
+
+.logo-img:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* Estilos de los enlaces del navbar */
+.navbar-custom .nav-link {
+  color: white;
+  font-weight: bold;
+  margin-right: 15px;
+  position: relative;
+}
+
+.search-form {
+  width: 100%;
+  max-width: 350px;
+  margin-left: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ff5722;
+  box-shadow: 0 0 8px rgba(255, 87, 34, 0.5);
+}
+
+.search-input::placeholder {
+  color: #888;
+}
+
+/* Estilos del dropdown de productos */
+.navbar-custom .dropdown {
+  position: relative;
+}
+
+.navbar-custom .dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.navbar-custom .dropdown-menu {
+  background-color: #0193d6;
+  border-radius: 5px;
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  z-index: 1000;
+}
+
+.navbar-custom .dropdown-item {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+}
+
+.navbar-custom .dropdown-item:hover {
+  background-color: #ff5722;
+}
+
+/* Botón de inicio de sesión (naranja) */
+.btn-light {
+  background-color: #ff5722;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+
+.btn-light:hover {
+  background-color: #ff784e;
+}
+
+/* Estilos para separar el botón de inicio de sesión del carrito */
+.navbar-custom .ms-auto {
+  display: flex;
+  align-items: center;
+}
+
+/* Carrito de compras (naranja) */
+.btn-light.ms-3 {
+  background-color: #ff5722; /* Color de fondo naranja */
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+
+.btn-light.ms-3:hover {
+  background-color: #ff784e; 
+}
