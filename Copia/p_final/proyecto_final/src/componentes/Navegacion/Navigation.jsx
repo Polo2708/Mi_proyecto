@@ -8,7 +8,6 @@ import Profile from '../Profile/Profile';
 import './Navigation.css';
 import logo from '../Imagenes/LOGO1.png';
 import { useCart } from '../../context/CartContext';
-import { Link } from 'react-router-dom';
 
 const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, handleUpdateUser }) => {
   const [showModal, setShowModal] = useState(false);
@@ -150,9 +149,6 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
                   <FaCogs /> 
                 </button>
               )}
-              
-              <Nav.Link as={Link} to="/">Inicio</Nav.Link>
-              <Nav.Link as={Link} to="/Usuarios">Usuarios</Nav.Link>
 
               {/* Si el usuario está logueado, mostrar el dropdown de perfil */}
               {user ? (
