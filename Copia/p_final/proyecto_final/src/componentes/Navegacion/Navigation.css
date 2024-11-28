@@ -11,7 +11,8 @@
 }
 
 .logo-img {
-  width: 150px;
+  width: 170px;
+  height: auto;
   transition: all 0.3s ease;
 }
 
@@ -30,14 +31,14 @@
 
 .search-form {
   width: 100%;
-  max-width: 350px;
-  margin-left: 300px;
+  max-width: 300px;
+  margin-left: 190px;
 }
 
 .search-input {
   width: 100%;
   padding: 10px 20px;
-  border-radius: 20px;
+  border-radius: 17px;
   border: 1px solid #ddd;
   font-size: 14px;
   transition: all 0.3s ease;
@@ -84,7 +85,7 @@
   background-color: #ff5722;
 }
 
-/* Botón de inicio de sesión (naranja) */
+/* Botón de inicio de sesión */
 .btn-light {
   background-color: #ff5722;
   border: none;
@@ -96,15 +97,14 @@
   background-color: #ff784e;
 }
 
-/* Estilos para separar el botón de inicio de sesión del carrito */
 .navbar-custom .ms-auto {
   display: flex;
   align-items: center;
 }
 
-/* Carrito de compras (naranja) */
+/* Carrito de compras */
 .btn-light.ms-3 {
-  background-color: #ff5722; /* Color de fondo naranja */
+  background-color: #ff5722; 
   border: none;
   color: white;
   font-weight: bold;

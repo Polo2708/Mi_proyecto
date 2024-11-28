@@ -161,6 +161,17 @@ app.post('/api/productos', upload.array('images', 4), (req, res) => {
   });
 });
 
+// Ruta para actualizar el rol de un usuario
+app.put('/api/usuarios/:id/rol', (req, res) => {
+  const { id } = req.params;
+  const { rol } = req.body; // Asegúrate de que el rol se envíe en el cuerpo de la solicitud
+  const sql = 'UPDATE usuarios SET rol = ? WHERE id = ?';
+  db.query(sql, [rol, id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json({ message: "Rol actualizado correctamente" });
+  });
+});
+
 // Middleware para verificar JWT en rutas protegidas
 const verifyToken = (req, res, next) => {
   const token = req.headers['authorization'];

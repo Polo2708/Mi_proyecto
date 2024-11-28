@@ -30,6 +30,11 @@ export const CartProvider = ({ children }) => {
     setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
   };
 
+  const clearCart = () => {
+    console.log("Vaciar carrito de compras");
+    setCartItems ([]);
+  };
+
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity < 1) return;
     setCartItems(prevItems =>

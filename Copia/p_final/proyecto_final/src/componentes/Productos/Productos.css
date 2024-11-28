@@ -1,45 +1,56 @@
 .productos-container {
+    display: flex;
+    justify-content: space-between;
     padding: 20px;
-  }
-  
-  .productos-grid {
+}
+
+.crud-section {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.list-section {
+    flex: 2;
+}
+
+.productos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-  }
-  
-  .producto-card {
+}
+
+.producto-card {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
     text-align: center;
-  }
-  
-  .producto-imagen {
+}
+
+.producto-imagen {
     width: 100%;
     height: auto;
-  }
-  
-  .producto-card h3 {
+}
+
+.producto-card h3 {
     margin: 10px 0;
-  }
-  
-  .producto-card p {
+}
+
+.producto-card p {
     margin: 5px 0;
     font-size: 1.2em;
     color: #555;
-  }
-  
-  button {
+}
+
+button {
     background-color: #28a745;
     color: white;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
     border-radius: 5px;
-  }
-  
-  button:hover {
+}
+
+button:hover {
     background-color: #218838;
-  }
+}
   

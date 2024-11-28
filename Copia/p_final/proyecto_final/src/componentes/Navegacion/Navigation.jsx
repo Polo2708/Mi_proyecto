@@ -8,18 +8,28 @@ import Profile from '../Profile/Profile';
 import './Navigation.css';
 import logo from '../Imagenes/LOGO1.png';
 import { useCart } from '../../context/CartContext';
+import { Link } from 'react-router-dom';
 
-const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud }) => {
+const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, handleUpdateUser }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [showCartModal, setShowCartModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); 
   const [showProfile, setShowProfile] = useState(false);  // Estado para mostrar el perfil
   const { cartItems } = useCart();
+  const [filteredItems, setFilteredItems] = useState([]); // Estado para los productos filtrados
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
+
+  useEffect(() => {
+    // Filtrar los productos según la consulta de búsqueda
+    const results = cartItems.filter(item => 
+      item.nombre.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredItems(results);
+  }, [searchQuery, cartItems]);
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
@@ -140,6 +150,9 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud }) =>
                   <FaCogs /> 
                 </button>
               )}
+              
+              <Nav.Link as={Link} to="/">Inicio</Nav.Link>
+              <Nav.Link as={Link} to="/Usuarios">Usuarios</Nav.Link>
 
               {/* Si el usuario está logueado, mostrar el dropdown de perfil */}
               {user ? (
@@ -212,7 +225,7 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud }) =>
             <Modal.Title>Perfil de {user.name}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Profile user={user} handleLogout={handleLogout} handleClose={handleProfileClick} />
+            <Profile user={user} handleLogout={handleLogout} handleClose={handleProfileClick} handleUpdateUser={handleUpdateUser} />
           </Modal.Body>
         </Modal>
       )}

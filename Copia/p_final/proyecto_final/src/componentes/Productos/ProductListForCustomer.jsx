@@ -8,11 +8,11 @@ const ProductListForCustomer = ({ products }) => {
 
     return (
         <div className="product-list-container">
-            <h2 className="product-list-title">Catálogo</h2>
-            <Row className="product-grid">
+            <h2 className="product-list-title">Nuestros Productos</h2>
+            <Row className="product-grid justify-content-center">
                 {products.map(product => (
-                    <Col key={product.id} className="col-2-4 mb-3">
-                        <Card className="product-card">
+                    <Col key={product.id} xs={6} sm={6} md={4} lg={3} className="mb-3">
+                        <Card className="product-card h-100 shadow-sm">
                             <div className="product-image-container">
                                 <Card.Img
                                     variant="top"
@@ -24,16 +24,21 @@ const ProductListForCustomer = ({ products }) => {
                                     }}
                                 />
                             </div>
-                            <Card.Body className="product-card-body">
-                                <Card.Title className="product-title">{product.nombre}</Card.Title>
-                                <Card.Text className="product-price">
-                                    ${Number(product.precio).toFixed(2)}
+                            <Card.Body className="product-card-body d-flex flex-column">
+                                <Card.Title className="product-title h5 mb-3">{product.nombre}</Card.Title>
+                                <Card.Text className="product-price mb-0 h4">
+                                    ${Number(product.precio).toLocaleString('es-ES', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}
                                 </Card.Text>
                                 <Button 
-                                    className="add-to-cart-btn"
+                                    variant="primary"
+                                    className="add-to-cart-btn mt-2"
                                     onClick={() => addToCart(product)}
+                                    title="Añadir al carrito"
                                 >
-                                    +
+                                    <i className="fas fa-shopping-cart"></i> Añadir al carrito
                                 </Button>
                             </Card.Body>
                         </Card>

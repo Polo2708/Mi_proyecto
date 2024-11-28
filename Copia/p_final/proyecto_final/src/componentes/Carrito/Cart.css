@@ -1,54 +1,161 @@
 .cart-container {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;  /* Reducir padding */
+    background-color: #f8f9fa;
+    border-radius: 12px;  /* Menor radio */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    max-width: 800px;  /* Reducir el ancho máximo */
+    margin: 40px auto;
+    font-family: 'Poppins', sans-serif;
 }
 
+/* Mensaje cuando el carrito está vacío */
+.empty-cart-message {
+    font-size: 1.4em;  /* Reducir tamaño de fuente */
+    color: #555;
+    padding: 40px 0;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Lista de artículos del carrito */
+.cart-items {
+    width: 100%;
+    margin-bottom: 30px;  /* Reducir espacio */
+}
+
+/* Estilo individual de cada artículo en el carrito */
 .cart-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+    display: grid;
+    grid-template-columns: 80px 1fr 100px;  /* Reducir tamaño de imagen y columna de precio */
+    gap: 10px;  /* Reducir espacio entre columnas */
+    background-color: #fff;
+    margin: 12px 0;  /* Reducir márgenes */
+    padding: 15px;  /* Reducir padding */
+    border-radius: 10px;  /* Redondear más suavemente */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.cart-item img {
+.cart-item:hover {
+    transform: translateY(-3px);  /* Menos movimiento al hacer hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilo para la X de eliminar */
+.remove-item-x {
+    position: absolute;
+    top: 0.5px;
+    right: 8px;
+    font-size: 1.8em;  /* Reducir tamaño de la X */
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.remove-item-x:hover {
+    color: #ff4500;
+}
+
+/* Contenedor de la imagen */
+.cart-item-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Imagen */
+.cart-item-image {
+    width: 70px;  /* Reducir tamaño de la imagen */
+    height: 70px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 50px;
+    border: 2px solid #eee;
 }
 
-.cart-item input {
-    width: 60px;
-    padding: 5px;
-}
-
-.cart-item button {
-    padding: 5px 10px;
-    background-color: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.cart-total {
-    margin-top: 20px;
+/* Información del artículo */
+.cart-item-info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0 10px;  /* Reducir padding */
 }
 
-.checkout-button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
+/* Nombre del producto */
+.item-name {
+    font-size: 1.1em;  /* Reducir tamaño de fuente */
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    text-transform: capitalize;
+}
+
+/* Línea divisoria entre nombre y precio */
+.item-divider {
+    margin: 6px 0;
+    height: 1px;
+    background-color: #eee;
+}
+
+/* Precio */
+.item-price {
+    font-size: 1.0em;  
+    color: #333;
+    font-weight: 700;
+    align-self: flex-end;
+    margin-bottom: 5px;
+}
+
+/* Caja de cantidad */
+.quantity-input {
+    padding: 5px 8px;
+    width: 60px;  /* Reducir tamaño de la caja de cantidad */
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    transition: border-color 0.3s ease;
+}
+
+.quantity-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Total del carrito */
+.cart-total {
+    font-size: 1.2em;  /* Reducir tamaño */
+    font-weight: 700;
+    margin-top: 20px;  /* Reducir margen */
+    text-align: right;
+    color: #333;
+    width: 100%;
+}
+
+/* Acciones del carrito */
+.cart-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;  /* Reducir espacio */
+}
+
+/* Botón de comprar */
+.purchase-button {
+    padding: 12px 24px;  /* Reducir tamaño del botón */
+    font-size: 1.2em;  /* Reducir tamaño de fuente */
     color: white;
+    background-color: #28a745;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    width: 50%;
+    transition: background-color 0.3s ease;
 }
 
-.checkout-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-} 
+.purchase-button:hover {
+    background-color: #218838;
+}

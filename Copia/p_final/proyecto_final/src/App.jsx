@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Modal } from 'react-bootstrap';
 import Navigation from './componentes/Navegacion/Navigation';
@@ -9,7 +10,10 @@ import Productos from './componentes/Productos/Productos';
 import { fetchProducts } from './componentes/Productos/api';
 import ProductListForCustomer from './componentes/Productos/ProductListForCustomer';
 import Login from './componentes/Login/Login'; 
+import Usuarios from './componentes/Usuarios/Usuarios';
+import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ProductProvider } from './context/ProductContext';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -50,45 +54,58 @@ function App() {
   };
 
   return (
-    <CartProvider>
-      <ErrorBoundary>
-        <div className="App">
-          <Navigation 
-            user={user} 
-            handleLogout={handleLogout} 
-            setUser={setUser} 
-            toggleLogin={toggleLoginForm} 
-            toggleCrud={() => setShowCrud(!showCrud)} 
-          />
-          
-          {/* Si el usuario no está autenticado, muestra la pantalla de inicio */}
-          {!user ? <Inicio user={user} /> : <p>Hola, {user.email}!</p>}
-            
-          {/* Modal para mostrar la lista de productos y el CRUD */}
-          <Modal show={showCrud} onHide={() => setShowCrud(false)} size="lg">
-            <Modal.Header closeButton>
-              <Modal.Title>Gestionar Productos</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Productos />
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowCrud(false)}>
-                Cerrar
-              </Button>
-            </Modal.Footer>
-          </Modal>
+    <Router>
+      <AuthProvider>
+        <CartProvider>
+          <ProductProvider>
+            <ErrorBoundary>
+              <div className="App">
+                <Navigation 
+                  user={user} 
+                  handleLogout={handleLogout} 
+                  setUser={setUser} 
+                  toggleLogin={toggleLoginForm} 
+                  toggleCrud={() => setShowCrud(!showCrud)} 
+                />
+                
+                {/* Si el usuario no está autenticado, muestra la pantalla de inicio */}
+                {!user ? <Inicio user={user} /> : <p>Hola, {user.email}!</p>}
 
-          {/* Muestra la lista de productos para el cliente en la vista principal */}
-          <ProductListForCustomer products={products} />
+                {/* Modal para mostrar la lista de productos y el CRUD */}
+                {user && user.role === 'admin' && (
+                  <Modal show={showCrud} onHide={() => setShowCrud(false)} size="lg">
+                    <Modal.Header closeButton>
+                      <Modal.Title>Gestionar Productos</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Productos />
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" onClick={() => setShowCrud(false)}>
+                        Cerrar
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
+                )}
 
-          {/* Mostrar formulario de login si showLogin es verdadero */}
-          {showLogin && <Login setUser={setUser} />}          
-          
-          <Footer />
-        </div>
-      </ErrorBoundary>
-    </CartProvider>
+                <Routes>
+                  <Route exact path='/' element={Inicio}/>
+                  <Route exact path='/Usuarios' element={Usuarios}/>
+                </Routes>
+
+                {/* Muestra la lista de productos para el cliente en la vista principal */}
+                <ProductListForCustomer products={products} />
+
+                {/* Mostrar formulario de login si showLogin es verdadero */}
+                {showLogin && <Login setUser={setUser} />}          
+                
+                <Footer />
+              </div>
+            </ErrorBoundary>
+          </ProductProvider>
+        </CartProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
