@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs"); // Para encriptar y comparar contraseñas
 const jwt = require("jsonwebtoken"); // Para generar tokens JWT
 const multer = require("multer"); // Para manejar la carga de archivos
 const path = require("path"); // Para manejar rutas de archivos
+const { error } = require("console");
 
 const app = express();
 app.use(cors());
@@ -45,6 +46,36 @@ db.connect((err) => {
 
 // Servir las imágenes desde el directorio 'uploads'
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Administradores
+const adminEmails = [
+  'chajisu36@gmail.com',
+  'polopolo27@gmail.com'
+];
+
+// Middleware para verificar JWT en rutas protegidas
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token) {
+    return res.status(403).json({ message: 'Token no proporcionado' });
+  }
+
+  jwt.verify(token, jwtSecret, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token no válido' });
+    }
+    req.user = decoded;
+    next();
+  });
+};
+
+// Middleware para verificar el rol del usuario
+const verifyRole = (role) => (req, res, next) => {
+  if (req.user.rol !== role) {
+    return res.status(403).json({ message: 'Acceso denegado' });
+  }
+  next();
+};
 
 // Ruta para obtener productos (ejemplo estático)
 app.get('/api/productos', (req, res) => {
@@ -98,9 +129,12 @@ app.post("/register", async (req, res) => {
     // Encriptar la contraseña antes de guardarla
     const hashedPassword = await bcrypt.hash(contraseña, 10);
 
+    // Verificar si el correo pertenece a un administrador
+    const rol = adminEmails.includes(email) ? 'admin' : 'cliente';
+
     // Insertar nuevo usuario en la base de datos
-    const queryInsert = "INSERT INTO usuarios (nombre, email, contraseña) VALUES (?, ?, ?)";
-    db.query(queryInsert, [nombre, email, hashedPassword], (err) => {
+    const queryInsert = "INSERT INTO usuarios (nombre, email, contraseña, rol) VALUES (?, ?, ?, ?)";
+    db.query(queryInsert, [nombre, email, hashedPassword, rol], (err) => {
       if (err) {
         return res.status(500).json({ message: "Error al registrar el usuario" });
       }
@@ -134,50 +168,82 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 
+    // Asignar el rol de admin si el correo esta en la lista
+    const rol = adminEmails.includes(email) ? 'admin' : user.rol;
+
     // Generar un token JWT
-    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1h' });
-    return res.status(200).json({ message: "Inicio de sesión exitoso", token });
+    const token = jwt.sign({
+      id: user.id, 
+      email: user.email, 
+      rol: user.rol
+    }, jwtSecret, { expiresIn: '1h' });
+
+    res.status(200).json({ token, user });
   });
 });
 
-// Ruta para agregar productos
-app.post('/api/productos', upload.array('images', 4), (req, res) => {
-  console.log(req.body); // Verifica que los datos del formulario se están enviando correctamente
-  console.log(req.files); // Verifica que las imágenes se están subiendo correctamente
+// Obtener todos los usuarios (solo accesible para admin)
+app.get('/api/usuarios', verifyToken, verifyRole('admin'), (req, res) => {
+  const sql = 'SELECT id, nombre, email, rol FROM usuarios';
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json(results);
+  });
+});
 
-  const { nombre, precio, descripcion, categoria, stock, marca } = req.body;
-  
-  // Obtener los nombres de los archivos de imagen
-  const imagenes = req.files ? req.files.map(file => file.filename) : []; // Array de nombres de archivos
-
-  const sql = 'INSERT INTO productos (nombre, precio, descripcion, categoria, stock, marca, imagenes) VALUES (?, ?, ?, ?, ?, ?, ?)';
-  
-  db.query(sql, [nombre, precio, descripcion, categoria, stock, marca, JSON.stringify(imagenes)], (err, result) => {
-    if (err) {
-      console.error('Error al agregar el producto:', err); // Log detallado
-      return res.status(500).json({ error: 'Error al agregar el producto', details: err.message });
+// Obtener los detalles de un usuario (solo accesible para admin)
+app.get('/api/usuarios/:id', verifyToken, verifyRole('admin'), (req, res) => {
+  const { id } = req.params;
+  const sql = 'SELECT id, nombre, email, rol FROM usuarios WHERE id = ?';
+  db.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    res.status(201).json({ id: result.insertId, nombre, precio, descripcion, categoria, stock, marca, imagenes });
+    res.status(200).json(results[0]);
   });
 });
 
-// Middleware para verificar JWT en rutas protegidas
-const verifyToken = (req, res, next) => {
-  const token = req.headers['authorization'];
-  if (!token) {
-    return res.status(403).json({ message: 'Token no proporcionado' });
+// Eliminar un usuario (solo accesible para admin)
+app.delete('/api/usuarios/:id', verifyToken, verifyRole('admin'), (req, res) => {
+  const { id } = req.params;
+  const sqlCheck = 'SELECT rol FROM usuarios WHERE id = ?';
+  db.query(sqlCheck, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    if (results[0].rol === 'admin') {
+      return res.status(403).json({ message: 'No se puede eliminar a un administrador' });
+    }
+
+    const sqlDelete = 'DELETE FROM usuarios WHERE id = ?';
+    db.query(sqlDelete, [id], (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(200).json({ message: 'Usuario eliminado correctamente' });
+    });
+  });
+});
+
+// Actualizar el rol de un usuario (solo accesible para admin)
+app.put('/api/usuarios/:id/rol', verifyToken, verifyRole('admin'), (req, res) => {
+  const { id } = req.params;
+  const { rol } = req.body;
+
+  if (!rol || (rol !== 'admin' && rol !== 'cliente')) {
+    return res.status(400).json({ message: 'Rol inválido' });
   }
-  
-  jwt.verify(token, jwtSecret, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ message: 'Token no válido' });
-    }
-    req.user = decoded;
-    next();
-  });
-};
 
-// Inicia el servidor
-app.listen(3001, () => {
-  console.log("Servidor corriendo en el puerto 3001");
+  const sqlUpdate = 'UPDATE usuarios SET rol = ? WHERE id = ?';
+  db.query(sqlUpdate, [rol, id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json({ message: 'Rol actualizado correctamente' });
+  });
+});
+
+// Iniciar servidor
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

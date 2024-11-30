@@ -10,7 +10,7 @@ const Login = ({ setUser, toggleLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError(''); // Limpiar errores previos
 
     const userData = { email, contraseña: password };
 
@@ -26,8 +26,17 @@ const Login = ({ setUser, toggleLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("user", JSON.stringify({ email }));
-        setUser({ email });
+        // Aquí asignamos el rol basándonos en el correo electrónico del usuario
+        const userWithRole = {
+          email,
+          role: email === 'chajisu36@gmail.com' ? 'admin' : 'user', // Asignar rol de admin si el email es admin@admin.com
+        };
+
+        // Guardar el usuario con el rol en localStorage
+        localStorage.setItem("user", JSON.stringify(userWithRole));
+
+        // Actualiza el estado del usuario con el rol asignado
+        setUser(userWithRole);
       } else {
         setError(data.message);
       }

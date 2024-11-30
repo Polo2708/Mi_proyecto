@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar, Nav, Container, Modal, Button, Form, Dropdown } from 'react-bootstrap';
-import { FaUser, FaShoppingCart, FaCogs } from 'react-icons/fa';  // Iconos
+import { FaUser, FaShoppingCart, FaCogs } from 'react-icons/fa';
+import * as jwt_decode from 'jwt-decode';
 import Login from '@/componentes/Login/Login';
 import Registro from '@/componentes/Login/Registro';
 import Cart from '../Carrito/Cart';  
@@ -8,22 +9,32 @@ import Profile from '../Profile/Profile';
 import './Navigation.css';
 import logo from '../Imagenes/LOGO1.png';
 import { useCart } from '../../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, handleUpdateUser }) => {
+  const [role, setRole] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [showCartModal, setShowCartModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); 
-  const [showProfile, setShowProfile] = useState(false);  // Estado para mostrar el perfil
-  const { cartItems } = useCart();
-  const [filteredItems, setFilteredItems] = useState([]); // Estado para los productos filtrados
+  const [showProfile, setShowProfile] = useState(false);
+  const { cartItems, setCartItems } = useCart();  // Asegúrate de que 'setCartItems' esté disponible desde el contexto.
+  const [filteredItems, setFilteredItems] = useState([]);
+  const navigate = useNavigate();  // Usar 'useNavigate' para la redirección
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        const decodedToken = jwt_decode(token);
+        setRole(decodedToken.rol);
+      } catch (error) {
+        console.error('Error al decodificar el token:', error);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
-    // Filtrar los productos según la consulta de búsqueda
     const results = cartItems.filter(item => 
       item.nombre.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -47,7 +58,7 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
   };
 
   const handleProfileClick = () => {
-    setShowProfile(!showProfile);  // Alternar el estado para mostrar el perfil
+    setShowProfile(!showProfile);
   };
 
   const handleRemoveFromCart = (productId) => {
@@ -62,7 +73,7 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
     setCartItems(prevItems => 
       prevItems.map(item => 
         item.id === productId 
-          ? {...item, cantidad: newQuantity}
+          ? { ...item, cantidad: newQuantity }
           : item
       )
     );
@@ -73,22 +84,28 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
       const existingItem = prevItems.find(item => item.id === product.id);
       
       if (existingItem) {
-        // Si el producto ya está en el carrito, aumentar la cantidad
         return prevItems.map(item =>
           item.id === product.id
-            ? {...item, cantidad: item.cantidad + 1}
+            ? { ...item, cantidad: item.cantidad + 1 }
             : item
         );
       }
       
-      // Si es un nuevo producto, agregarlo al carrito
-      return [...prevItems, {...product, cantidad: 1}];
+      return [...prevItems, { ...product, cantidad: 1 }];
     });
+  };
+
+  const handleAdminPanel = () => {
+    console.log(user);
+    if (user && user.role === 'admin') {
+      navigate('/admin');  // Redirigir al panel de administración
+    } else {
+      alert('No tienes permisos para acceder a este panel.');
+    }
   };
 
   return (
     <>
-      {/* Barra de navegación */}
       <Navbar className="navbar-custom">
         <Container>
           <Navbar.Brand href="/">
@@ -97,8 +114,6 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-
-              {/* Dropdown de productos con categorías */}
               <Nav.Item className="dropdown">
                 <Nav.Link href="/productos" className="dropdown-toggle" data-bs-toggle="dropdown">
                   Marcas
@@ -111,7 +126,6 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
                 </ul>
               </Nav.Item>
 
-              {/* Secciones de Hombres, Mujer, Niños */}
               <Nav.Link href="/hombres">Hombres</Nav.Link>
               <Nav.Link href="/mujer">Mujer</Nav.Link>
               <Nav.Link href="/ninos">Niños</Nav.Link>
@@ -127,12 +141,10 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
               />
             </Form>
 
-            {/* Espacio para separar la barra de búsqueda y el botón de inicio de sesión */}
             <div className="d-flex align-items-center ms-auto">
-              {/* Carrito de compras */}
               <button 
                 className="btn btn-light ms-3" 
-                onClick={() => setShowCartModal(true)}
+                onClick={handleCartShow}
               >
                 <FaShoppingCart />
                 {cartItems.length > 0 && (
@@ -140,7 +152,6 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
                 )}
               </button>
 
-              {/* Botón de gestión de productos (solo visible si el usuario está logueado) */}
               {user && (
                 <button 
                   className="btn btn-light ms-3" 
@@ -150,7 +161,6 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
                 </button>
               )}
 
-              {/* Si el usuario está logueado, mostrar el dropdown de perfil */}
               {user ? (
                 <Dropdown className="ms-3">
                   <Dropdown.Toggle variant="light" id="dropdown-profile">
@@ -160,13 +170,17 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
                     <Dropdown.Item onClick={handleProfileClick}>
                       Ver perfil
                     </Dropdown.Item>
+                    {user && user.role === 'admin' && (
+                      <Dropdown.Item onClick={handleAdminPanel}>
+                        Administrar Clientes
+                      </Dropdown.Item>
+                    )}
                     <Dropdown.Item onClick={handleLogout}>
                       Cerrar sesión
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               ) : (
-                // Botón de Iniciar sesión si no está logueado
                 <button className="btn btn-light ms-3" onClick={handleShow}>
                   <FaUser /> Iniciar sesión
                 </button>
@@ -176,7 +190,6 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
         </Container>
       </Navbar>
 
-      {/* Modal de Login */}
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{isLogin ? 'Iniciar Sesión' : 'Registrarse'}</Modal.Title>
@@ -190,10 +203,9 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
         </Modal.Body>
       </Modal>
 
-      {/* Modal del carrito de compras */}
       <Modal 
         show={showCartModal} 
-        onHide={() => setShowCartModal(false)} 
+        onHide={handleCartShow} 
         size="lg"
         aria-labelledby="cart-modal"
       >
@@ -208,20 +220,24 @@ const Navigation = ({ user, handleLogout, setUser, toggleLogin, toggleCrud, hand
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowCartModal(false)}>
+          <Button variant="secondary" onClick={handleCartShow}>
             Cerrar
           </Button>
         </Modal.Footer>
       </Modal>
 
-      {/* Modal de Perfil */}
       {showProfile && user && (
         <Modal show={showProfile} onHide={handleProfileClick} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>Perfil de {user.name}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Profile user={user} handleLogout={handleLogout} handleClose={handleProfileClick} handleUpdateUser={handleUpdateUser} />
+            <Profile 
+              user={user} 
+              handleLogout={handleLogout} 
+              handleClose={handleProfileClick} 
+              handleUpdateUser={handleUpdateUser} 
+            />
           </Modal.Body>
         </Modal>
       )}
